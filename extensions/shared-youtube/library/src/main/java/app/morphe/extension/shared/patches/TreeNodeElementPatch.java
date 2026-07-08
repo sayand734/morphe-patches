@@ -19,6 +19,11 @@ import app.morphe.extension.shared.patches.components.ContextInterface;
 @SuppressWarnings("unused")
 public class TreeNodeElementPatch {
 
+    public interface LithoGetBufferContainerInterface {
+        // Method is added during patching.
+        Object patch_getContainer();
+    }
+
     /**
      * Injection point.
      */

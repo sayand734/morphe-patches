@@ -8,18 +8,35 @@
 package app.morphe.patches.shared.misc.litho.node
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatch
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
+import app.morphe.patches.music.layout.buttons.action.TreeNodeListFingerprint
+import app.morphe.patches.music.layout.buttons.action.TreeNodeListHelperConstructorFingerprint
 import app.morphe.patches.shared.misc.litho.context.EXTENSION_CONTEXT_INTERFACE
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.getFreeRegisterProvider
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstructionOrThrow
+import app.morphe.util.p0Register
+import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import java.lang.ref.WeakReference
 
 internal const val EXTENSION_CLASS =
     "Lapp/morphe/extension/shared/patches/TreeNodeElementPatch;"
+private const val EXTENSION_LITHO_CONTAINER_INTERFACE =
+    $$"Lapp/morphe/extension/shared/patches/TreeNodeElementPatch$LithoGetBufferContainerInterface;"
 
 private lateinit var componentLoadedMethodRef: WeakReference<MutableMethod>
 private lateinit var lazilyConvertedElementLoadedMethodRef: WeakReference<MutableMethod>
@@ -66,6 +83,51 @@ internal fun createTreeNodeElementHookPatch(
 
         val lazilyConvertedElementLoadedMethod = LazilyConvertedElementPatchFingerprint.method
         lazilyConvertedElementLoadedMethodRef = WeakReference(lazilyConvertedElementLoadedMethod)
+
+        fun addLithoContainerInterface(
+            clazz: MutableClass,
+            reference: FieldReference
+        ) {
+            clazz.apply {
+                interfaces.add(EXTENSION_LITHO_CONTAINER_INTERFACE)
+                methods.add(
+                    ImmutableMethod(
+                        type,
+                        "patch_getContainer",
+                        listOf(),
+                        "Ljava/lang/Object;",
+                        AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+                        null,
+                        null,
+                        MutableMethodImplementation(2),
+                    ).toMutable().apply {
+                        addInstructions(
+                            0,
+                            """
+                                iget-object v0, p0, $reference
+                                return-object v0
+                            """
+                        )
+                    }
+                )
+            }
+        }
+
+        TreeNodeListFingerprint.let {
+            val field = it.instructionMatches.first().getFieldAccessed()
+            addLithoContainerInterface(it.classDef, field)
+        }
+
+        TreeNodeListHelperConstructorFingerprint.let {
+            val p2 = it.method.p0Register + 2
+            val index = it.method.indexOfFirstInstructionOrThrow {
+                opcode == Opcode.IPUT_OBJECT && (this as TwoRegisterInstruction).registerA == p2
+            }
+            val field = it.method.getInstruction<ReferenceInstruction>(index)
+                .getReference<FieldReference>()!!
+
+            addLithoContainerInterface(it.classDef, field)
+        }
     }
 }
 

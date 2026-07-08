@@ -7,16 +7,14 @@
 
 package app.morphe.extension.music.patches.components;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 import app.morphe.extension.music.settings.Settings;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.patches.TreeNodeElementPatch.LithoGetBufferContainerInterface;
 import app.morphe.extension.shared.patches.components.BufferAsciiStrings;
 import app.morphe.extension.shared.patches.components.ContextInterface;
 import app.morphe.extension.shared.patches.components.Filter;
@@ -130,16 +128,13 @@ public final class MusicActionButtonsFilter extends Filter {
             return true;
         }
         if (matchedGroup == genericActionButton) {
-            if (path == null || !path.contains(VIDEO_ACTION_BAR_PREFIX)) {
+            if (!path.contains(VIDEO_ACTION_BAR_PREFIX)) {
                 return false;
             }
             // Wrapper- and inner-level renders embed sibling data in their proto buffer, so
             // a single marker would match the whole action bar. Only fire on the leaf-button
             // render - path contains `|button.eml-fe|` but not the `button_inner` descendant.
             if (!path.contains("|button.eml-fe|") || path.contains("button_inner")) {
-                return false;
-            }
-            if (asciiStrings == null) {
                 return false;
             }
             // Dispatch by endpoint marker. Each of the four known buttons has a unique
@@ -161,7 +156,7 @@ public final class MusicActionButtonsFilter extends Filter {
             }
             return Settings.HIDE_SAVE_BUTTON.get();
         }
-        return path != null && path.contains(VIDEO_ACTION_BAR_PREFIX);
+        return path.contains(VIDEO_ACTION_BAR_PREFIX);
     }
 
     /**
@@ -175,8 +170,7 @@ public final class MusicActionButtonsFilter extends Filter {
      * reflection walk) and dispatch on the same endpoint markers that {@link #isFiltered}
      * uses for visual hiding.
      */
-    public static void onLazilyConvertedElementLoaded(@NonNull String identifier,
-                                                      @NonNull List<Object> treeNodeResultList) {
+    public static void onLazilyConvertedElementLoaded(String identifier, List<Object> treeNodeResultList) {
         try {
             if (!identifier.startsWith(VIDEO_ACTION_BAR_PREFIX)) {
                 return;
@@ -213,53 +207,16 @@ public final class MusicActionButtonsFilter extends Filter {
      */
     @Nullable
     private static byte[] extractButtonProto(@Nullable Object item) {
-        if (item == null) return null;
-        ButtonProtoBufferInterface holder = findButtonProtoHolder(item, /* depth */ 0,
-                /* maxDepth */ 6, new IdentityHashMap<>());
-        return holder == null ? null : holder.patch_getBuffer();
-    }
+        if (item instanceof LithoGetBufferContainerInterface bufferInterface) {
+            return extractButtonProto(bufferInterface.patch_getContainer());
+        }
+        if (item instanceof ButtonProtoBufferInterface holder) {
+            return holder.patch_getBuffer();
+        }
 
-    @Nullable
-    private static ButtonProtoBufferInterface findButtonProtoHolder(
-            @Nullable Object value, int depth, int maxDepth,
-            IdentityHashMap<Object, Boolean> visited) {
-        if (value == null || depth > maxDepth) return null;
-        if (value instanceof ButtonProtoBufferInterface holder) return holder;
-        if (value instanceof String || value instanceof Number || value instanceof Boolean
-                || value instanceof byte[]) {
-            return null;
-        }
-        Class<?> cls = value.getClass();
-        // Skip framework types that either have no button data (locks / refs / collections
-        // that would loop forever) or are unrelated to litho tree nodes.
-        String pkg = cls.getName();
-        if (pkg.startsWith("java.util.concurrent")
-                || pkg.startsWith("java.lang.ref")
-                || pkg.startsWith("java.io")
-                || pkg.startsWith("android.")
-                || pkg.startsWith("androidx.")
-                || pkg.startsWith("j$.")) {
-            return null;
-        }
-        if (visited.containsKey(value)) return null;
-        visited.put(value, Boolean.TRUE);
-
-        for (Class<?> c = cls; c != null && c != Object.class; c = c.getSuperclass()) {
-            for (Field f : c.getDeclaredFields()) {
-                if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
-                try {
-                    f.setAccessible(true);
-                    ButtonProtoBufferInterface found = findButtonProtoHolder(f.get(value),
-                            depth + 1, maxDepth, visited);
-                    if (found != null) return found;
-                } catch (Throwable ignored) {
-                }
-            }
-        }
         return null;
     }
 
-    @NonNull
     private static ActionButton classify(byte[] buffer) {
         String contents = new String(buffer, StandardCharsets.ISO_8859_1);
         // Order matters - the more-specific `segmented_like_dislike_button` and
