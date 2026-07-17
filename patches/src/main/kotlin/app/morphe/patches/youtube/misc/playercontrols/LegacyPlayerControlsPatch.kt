@@ -315,9 +315,17 @@ val legacyPlayerControlsPatch = bytecodePatch(
         )
         visibilityImmediateMethodRef = WeakReference(PlayerControlsExtensionHookFingerprint.method)
 
-        MotionEventFingerprint.let {
-            visibilityNegatedImmediateMethodRef = WeakReference(it.method)
-            visibilityNegatedImmediateInsertIndex = it.instructionMatches.first().index + 1
+        MotionEventFingerprint.let { result ->
+            visibilityNegatedImmediateMethodRef = WeakReference(result.method)
+            result.method.apply {
+                // Dynamically scan the method to find exactly where getX() is called
+                val getXIndex = indexOfFirstInstructionOrThrow(0) {
+                    getReference<MethodReference>()?.name == "getX"
+                }
+                
+                // Set the injection point exactly one line after getX()
+                visibilityNegatedImmediateInsertIndex = getXIndex + 1
+            }
         }
 
         fun overrideExploderLayout(fingerprint: Fingerprint) {
