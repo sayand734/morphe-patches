@@ -58,7 +58,6 @@ private object SetPivotBarVisibilityParentFingerprint : Fingerprint(
 
 internal object SetPivotBarVisibilityFingerprint : Fingerprint(
     classFingerprint = SetPivotBarVisibilityParentFingerprint,
-    accessFlags = listOf(AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf("Z"),
     filters = listOf(
