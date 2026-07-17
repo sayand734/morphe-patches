@@ -58,13 +58,13 @@ private object SetPivotBarVisibilityParentFingerprint : Fingerprint(
 
 internal object SetPivotBarVisibilityFingerprint : Fingerprint(
     classFingerprint = SetPivotBarVisibilityParentFingerprint,
-    accessFlags = listOf(AccessFlags.PRIVATE, AccessFlags.FINAL),
+    accessFlags = listOf(AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf("Z"),
-    filters = OpcodesFilter.opcodesToFilters(
-        Opcode.CHECK_CAST,
-        Opcode.IF_EQZ,
+    filters = listOf(
+        string("FEnotifications_inbox")
     )
+   
 )
 
 internal object ShortsExperimentalPlayerFeatureFlagFingerprint : Fingerprint(
