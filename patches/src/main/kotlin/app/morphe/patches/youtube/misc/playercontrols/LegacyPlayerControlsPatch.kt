@@ -319,17 +319,13 @@ val legacyPlayerControlsPatch = bytecodePatch(
         visibilityImmediateMethodRef = WeakReference(PlayerControlsExtensionHookFingerprint.method)
 
         MotionEventFingerprint.let { result ->
-            visibilityNegatedImmediateMethodRef = WeakReference(result.method)
-            result.method.apply {
-                // Dynamically scan the method to find exactly where getX() is called
-                val getXIndex = indexOfFirstInstructionOrThrow(0) {
-                    getReference<MethodReference>()?.name == "getX"
-                }
-                
-                // Set the injection point exactly one line after getX()
-                visibilityNegatedImmediateInsertIndex = getXIndex + 1
-            }
-        }
+        visibilityNegatedImmediateMethodRef = WeakReference(result.method)
+        
+        // Bypass the Dalvik move-result trap completely.
+        // Since the hook is void and takes no parameters, we inject it 
+        // safely at the absolute beginning of the method.
+        visibilityNegatedImmediateInsertIndex = 0
+    }
 
         fun overrideExploderLayout(fingerprint: Fingerprint) {
             fingerprint.let {
