@@ -217,12 +217,11 @@ val hideShortsComponentsPatch = bytecodePatch(
         )
 
         // Set the pivotBar view.
-       // Set the pivotBar view.
     SetPivotBarVisibilityFingerprint.let { result ->
         result.method.apply {
             // Safely find the exact location where the PivotBar is cast
             val checkCastIndex = indexOfFirstInstructionOrThrow(0) {
-                it.opcode == com.android.tools.smali.dexlib2.Opcode.CHECK_CAST
+                opcode == Opcode.CHECK_CAST
             }
             
             // Grab the exact register holding the PivotBar
