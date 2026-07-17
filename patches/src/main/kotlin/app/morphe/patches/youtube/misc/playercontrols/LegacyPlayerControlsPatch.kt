@@ -36,6 +36,9 @@ import app.morphe.util.findFreeRegister
 import app.morphe.util.inputStreamFromBundledResource
 import app.morphe.util.insertLiteralOverride
 import app.morphe.util.returnEarly
+import app.morphe.util.indexOfFirstInstructionOrThrow
+import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import org.w3c.dom.Node
