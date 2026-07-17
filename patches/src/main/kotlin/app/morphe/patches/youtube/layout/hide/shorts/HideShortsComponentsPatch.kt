@@ -43,6 +43,7 @@ import app.morphe.util.removeFromParent
 import app.morphe.util.returnLate
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.Opcode
 
 internal val hideShortsAppShortcutOption = booleanOption(
     key = "hideShortsAppShortcut",
