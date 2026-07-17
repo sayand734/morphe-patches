@@ -371,7 +371,7 @@ Sua chave de API nunca deve ser compartilhada. Qualquer pessoa com acesso a ela 
   <string name="morphe_do_not_remember_loop_video_title">Não lembrar vídeo em loop</string>
   <string name="morphe_do_not_remember_loop_video_summary">Impedir que o estado atual do vídeo em loop seja salvo para vídeos subsequentes</string>
   <!-- interaction.loop.loopVideoButtonPatch -->
-  <string name="morphe_loop_video_button_title">Requer pressionar e segurar antes que um gesto de deslizar seja reconhecido</string>
+  <string name="morphe_loop_video_button_title">Mostrar botão de loop do vídeo</string>
   <string name="morphe_loop_video_button_toast_on">Vídeo em loop está ativado</string>
   <string name="morphe_loop_video_button_toast_off">Vídeo em loop está desativado</string>
   <string name="morphe_loop_video_range_dialog_title">Intervalo do loop</string>
@@ -605,7 +605,7 @@ Observação: Se \"Simular streams de vídeo\" não estiver ativado, habilitar i
   <string name="morphe_fix_transcript_summary">Ocultar botão \'Notificações\'</string>
   <!-- layout.buttons.navigation.navigationButtonsPatch -->
   <string name="morphe_navigation_buttons_screen_title">Botões de navegação</string>
-  <string name="morphe_navigation_buttons_screen_summary">Ocultar botão \'Pesquisar\'</string>
+  <string name="morphe_navigation_buttons_screen_summary">Escolha quais botões aparecem na barra de navegação inferior</string>
   <!-- 'Home' should be translated using the same localized wording YouTube displays for the tab. -->
   <string name="morphe_hide_home_button_title">Ocultar o botão Início</string>
   <!-- 'Shorts' should be translated using the same localized wording YouTube displays for the tab. -->
@@ -798,8 +798,8 @@ Configurações → Reprodução (ou Reprodução automática) → Reproduzir o 
   <!-- layout.player.fullscreen.exitFullscreenPatch -->
   <string name="morphe_exit_fullscreen_title">Sair do modo de tela cheia ao final do vídeo</string>
   <string name="morphe_exit_fullscreen_entry_1">Desativado</string>
-  <string name="morphe_exit_fullscreen_entry_2">Apenas retrato</string>
-  <string name="morphe_exit_fullscreen_entry_3">Apenas paisagem</string>
+  <string name="morphe_exit_fullscreen_entry_2">No modo retrato</string>
+  <string name="morphe_exit_fullscreen_entry_3">No modo paisagem</string>
   <string name="morphe_exit_fullscreen_entry_4">Retrato e paisagem</string>
   <!-- layout.player.fullscreen.disableFullscreenGesturesPatch -->
   <string name="morphe_disable_fullscreen_gestures_title">Gestos de tela cheia</string>
@@ -816,46 +816,6 @@ Configurações → Reprodução (ou Reprodução automática) → Reproduzir o 
   <string name="morphe_player_overlay_opacity_title">Opacidade do reprodutor</string>
   <string name="morphe_player_overlay_opacity_summary">Ajuste o nível de transparência (0 é transparente, 100 é opaco)</string>
   <string name="morphe_player_overlay_opacity_invalid_toast">Opacidade do reprodutor deve estar entre 0-100</string>
-  <!-- layout.returnyoutubedislike.returnYouTubeDislikePatch -->
-  <!-- Brief notification (toast) shown if network connection times out. Translations of this should not be longer than the original English text, otherwise the text can be clipped and not entirely shown. -->
-  <string name="morphe_ryd_failure_connection_timeout">Não gostei indisponível por um tempo (API expirou)</string>
-  <string name="morphe_ryd_failure_connection_status_code">Não gostei indisponível (status %d)</string>
-  <string name="morphe_ryd_failure_client_rate_limit_requested">\"Não gostei\" não estão disponíveis (limite da API do cliente)</string>
-  <string name="morphe_ryd_failure_generic">Não gostei indisponível (%s)</string>
-  <!-- Brief notification (Toast) shown if the user enables RYD while a video is opened, and then tries to vote for the video. -->
-  <string name="morphe_ryd_failure_ryd_enabled_while_playing_video_then_user_voted">Recarregue o vídeo para votar usando o Return YouTube Dislike</string>
-  <!-- Video likes have been set to hidden by the video uploader. -->
-  <string name="morphe_ryd_video_likes_hidden_by_video_owner">Oculto pelo proprietário</string>
-  <string name="morphe_ryd_enabled_title">Limitação: As curtidas podem não aparecer no modo anônimo</string>
-  <string name="morphe_ryd_dislike_percentage_title">Mostrar não gostei como porcentagem</string>
-  <string name="morphe_ryd_dislike_percentage_summary">Exibe não gostei como porcentagem, substituindo o número convencional</string>
-  <!-- Translations should match the language used in 'morphe_sb_enable_compact_skip_button'. -->
-  <string name="morphe_ryd_compact_layout_title">Usar botão Curtir compacto</string>
-  <string name="morphe_ryd_compact_layout_summary">Reduz a largura do botão Curtir para economizar espaço</string>
-  <string name="morphe_ryd_estimated_like_title">Mostrar estimativa de \"gostei\"</string>
-  <string name="morphe_ryd_estimated_like_summary">Exibe uma contagem de likes estimada em vídeos onde o criador desativou likes</string>
-  <string name="morphe_ryd_toast_on_connection_error_title">Mostra uma notificação quando o servidor Return YouTube Dislike estiver indisponível</string>
-  <string name="morphe_ryd_toast_on_connection_error_summary">Mostra uma notificação quando o servidor Return YouTube Dislike estiver indisponível</string>
-  <string name="morphe_ryd_attribution_summary">"Dados fornecidos pela API Return YouTube Dislike
-
-Toque aqui para abrir ReturnYouTubeDislike.com"</string>
-  <!-- Statistic strings are shown in the settings only when Morphe debug mode is enabled. Typical users will never see these. -->
-  <string name="morphe_ryd_statistics_category_title">Estatísticas da API do Return YouTube Dislike deste dispositivo</string>
-  <string name="morphe_ryd_statistics_getFetchCallResponseTimeAverage_title">Tempo de resposta da API, média</string>
-  <string name="morphe_ryd_statistics_getFetchCallResponseTimeMin_title">Tempo de resposta da API, mínimo</string>
-  <string name="morphe_ryd_statistics_getFetchCallResponseTimeMax_title">Tempo de resposta da API, máximo</string>
-  <string name="morphe_ryd_statistics_getFetchCallResponseTimeLast_title">Tempo de resposta da API, último vídeo</string>
-  <string name="morphe_ryd_statistics_getFetchCallResponseTimeLast_rate_limit_summary">Não gostei está temporariamente indisponível - Taxa limite da API do cliente em efeito</string>
-  <string name="morphe_ryd_statistics_getFetchCallCount_title">API de busca de votos, número de chamadas</string>
-  <string name="morphe_ryd_statistics_getFetchCallCount_zero_summary">Nenhuma chamada de rede feita</string>
-  <string name="morphe_ryd_statistics_getFetchCallCount_non_zero_summary">%d chamadas de rede realizadas</string>
-  <string name="morphe_ryd_statistics_getFetchCallNumberOfFailures_title">API de busca de votos, números de chamadas perdidas</string>
-  <string name="morphe_ryd_statistics_getFetchCallNumberOfFailures_zero_summary">Nenhuma chamada de rede perdida</string>
-  <string name="morphe_ryd_statistics_getFetchCallNumberOfFailures_non_zero_summary">%d chamada de rede perdida</string>
-  <string name="morphe_ryd_statistics_getNumberOfRateLimitRequestsEncountered_title">Taxa limite da API do cliente</string>
-  <string name="morphe_ryd_statistics_getNumberOfRateLimitRequestsEncountered_zero_summary">Nenhum taxa limite do cliente encontrado</string>
-  <string name="morphe_ryd_statistics_getNumberOfRateLimitRequestsEncountered_non_zero_summary">%d taxa limite do cliente encontrado</string>
-  <string name="morphe_ryd_statistics_millisecond_text">%d milisegundos</string>
   <!-- layout.searchbar.wideSearchbarPatch -->
   <string name="morphe_wide_searchbar_title">Ativar barra de busca ampla</string>
   <!-- layout.sponsorblock.sponsorBlockPatch -->
