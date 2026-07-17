@@ -217,25 +217,31 @@ val hideShortsComponentsPatch = bytecodePatch(
             highPriority = true
         )
 
-        // Set the pivotBar view.
-    SetPivotBarVisibilityFingerprint.let { result ->
-        result.method.apply {
-            // Safely find the exact location where the PivotBar is cast
-            val checkCastIndex = indexOfFirstInstructionOrThrow(0) {
-                opcode == Opcode.CHECK_CAST
-            }
-            
-            // Grab the exact register holding the PivotBar
-            val viewRegister = getInstruction(checkCastIndex).registerA
+      // Set the pivotBar view.
 
-            // Inject our code safely, exactly one line after the cast
-            addInstruction(
-                checkCastIndex + 1,
-                "invoke-static {v$viewRegister}," +
-                        "$EXTENSION_FILTER->setPivotBar(Lcom/google/android/libraries/youtube/rendering/ui/pivotbar/PivotBar;)V",
-            )
+        SetPivotBarVisibilityFingerprint.let { result ->
+
+            result.method.apply {
+
+                val insertIndex = result.instructionMatches.last().index
+
+                val viewRegister = getInstruction<OneRegisterInstruction>(insertIndex - 1).registerA
+
+
+
+                addInstruction(
+
+                    insertIndex,
+
+                    "invoke-static {v$viewRegister}," +
+
+                            "$EXTENSION_FILTER->setPivotBar(Lcom/google/android/libraries/youtube/rendering/ui/pivotbar/PivotBar;)V",
+
+                )
+
+            }
+
         }
-    }
 
         // Hook to hide the pivotBar when the Shorts player is opened.
         ReelWatchFragmentInitPlaybackFingerprint.instructionMatches.last().getMethodCalled()
